@@ -1,6 +1,6 @@
 {
-  "name": "svelte-parse-template",
-  "description": "Parse Svelte template only",
+  "name": "svelte-parse-markup",
+  "description": "Parse Svelte markup without parsing the script or style tags",
   "version": "0.1.0",
   "license": "MIT",
   "author": "Bjorn Lu",
@@ -17,18 +17,20 @@
     "index.d.ts"
   ],
   "funding": "https://bjornlu.com/sponsor",
-  "homepage": "https://github.com/bluwy/svelte-parse-template",
+  "homepage": "https://github.com/bluwy/svelte-parse-markup",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bluwy/svelte-parse-template.git"
+    "url": "https://github.com/bluwy/svelte-parse-markup.git"
   },
   "bugs": {
-    "url": "https://github.com/bluwy/svelte-parse-template/issues"
+    "url": "https://github.com/bluwy/svelte-parse-markup/issues"
   },
   "keywords": [
     "svelte",
     "parse",
-    "template"
+    "markup",
+    "script",
+    "style"
   ],
   "scripts": {
     "test": "uvu tests"

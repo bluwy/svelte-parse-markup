@@ -1,11 +1,11 @@
-# svelte-parse-template
+# svelte-parse-markup
 
-Parse a Svelte template without parsing the script or style tags.
+Parse Svelte markup without parsing the script or style tags.
 
 ## Usage
 
 ```js
-import { parse } from 'svelte-parse-template'
+import { parse } from 'svelte-parse-markup'
 
 const ast = parse('some svelte code')
 
@@ -48,7 +48,7 @@ console.log(ast.css.children)
 // ]
 ```
 
-`svelte-parse-template` skips parsing scripts and styles, and injects a `Text` node instead. Check out the [Svelte REPL](https://svelte.dev/repl) AST output tab to compare how the original AST would look like.
+`svelte-parse-markup` skips parsing scripts and styles, and injects a `Text` node instead. Check out the [Svelte REPL](https://svelte.dev/repl) AST output tab to compare how the original AST would look like.
 
 ## Sponsors
 

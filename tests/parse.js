@@ -51,6 +51,14 @@ test('ast start and end is consistent', async () => {
   assert.equal(mine.css.content.end, them.css.content.end)
 })
 
+test('dont generate ast for missing style', async () => {
+  const template = await read('BasicPartial.svelte')
+  const ast = parseTemplate(template)
+  assert.ok(ast.instance.content.body)
+  assert.ok(ast.module.content.body)
+  assert.equal(ast.css, undefined)
+})
+
 test('parse svelte code that needs preprocess', async () => {
   const template = await read('Basic.svelte')
   const ast = parseTemplate(template)

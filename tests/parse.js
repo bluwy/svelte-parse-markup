@@ -75,4 +75,36 @@ test('parse svelte code that needs preprocess with space', async () => {
   assert.equal(ast.css.children[0].type, 'Text')
 })
 
+test('ast should not be in svelte:head', async () => {
+  const template = await read('SvelteHead.svelte')
+  const ast = parseTemplate(template)
+  assert.equal(ast.instance.content.body[0].type, 'Text')
+  assert.equal(ast.module.content.body[0].type, 'Text')
+  assert.equal(ast.css.children[0].type, 'Text')
+  assert.ok(ast.instance.content.start <= ast.instance.content.body[0].start)
+  assert.ok(ast.instance.content.end >= ast.instance.content.body[0].end)
+  assert.ok(ast.module.content.start <= ast.module.content.body[0].start)
+  assert.ok(ast.module.content.end >= ast.module.content.body[0].end)
+  assert.ok(ast.css.start <= ast.css.children[0].start)
+  assert.ok(ast.css.end >= ast.css.children[0].end)
+  assert.equal(
+    ast.instance.content.body[0].data,
+    template.slice(
+      ast.instance.content.body[0].start,
+      ast.instance.content.body[0].end
+    )
+  )
+  assert.equal(
+    ast.module.content.body[0].data,
+    template.slice(
+      ast.module.content.body[0].start,
+      ast.module.content.body[0].end
+    )
+  )
+  assert.equal(
+    ast.css.children[0].data,
+    template.slice(ast.css.children[0].start, ast.css.children[0].end)
+  )
+})
+
 test.run()

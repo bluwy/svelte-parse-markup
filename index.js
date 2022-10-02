@@ -1,8 +1,8 @@
 import { parse as parseSvelte } from 'svelte/compiler'
 
 // https://github.com/sveltejs/svelte/blob/0b46c72cada210b3a6c72c30a51d35f5c4ccefb3/src/compiler/preprocess/index.ts#L146-L149
-const scriptRegex = /^<script(\s[^]*?)?(?:>([^]*?)<\/script>|\/>)/gi
-const styleRegex = /^<style(\s[^]*?)?(?:>([^]*?)<\/style>|\/>)/gi
+const scriptRegex = /^<script(\s[^]*?)?(?:>([^]*?)<\/script>|\/>)/gim
+const styleRegex = /^<style(\s[^]*?)?(?:>([^]*?)<\/style>|\/>)/gim
 const contextModuleRegex = /context\s*=\s*["']module["']/i
 
 /** @type {import('./index').parse} */
@@ -20,7 +20,7 @@ export function parse(template, options) {
     } else if (!instanceNode && !isContextModule) {
       instanceNode = { type: 'Text', start, end, raw: content, data: content }
     }
-    return match.replace(content, ' '.repeat(content.length))
+    return match.replace(content, content.replace(/./g, ' '))
   })
 
   template = template.replace(styleRegex, (match, attrs, content) => {
@@ -29,16 +29,24 @@ export function parse(template, options) {
     if (!cssNode) {
       cssNode = { type: 'Text', start, end, raw: content, data: content }
     }
-    return match.replace(content, ' '.repeat(content.length))
+    return match.replace(content, content.replace(/./g, ' '))
   })
 
   const ast = parseSvelte(template, options)
 
   if (ast.instance && instanceNode) {
+    instanceNode.start += ast.instance.start
+    instanceNode.end += ast.instance.start
     ast.instance.content.body = [instanceNode]
-  } else if (ast.module && moduleNode) {
+  }
+  if (ast.module && moduleNode) {
+    moduleNode.start += ast.module.start
+    moduleNode.end += ast.module.start
     ast.module.content.body = [moduleNode]
-  } else if (ast.css && cssNode) {
+  }
+  if (ast.css && cssNode) {
+    cssNode.start += ast.css.start
+    cssNode.end += ast.css.start
     ast.css.children = [cssNode]
     ast.css.content.styles = cssNode.raw
   }

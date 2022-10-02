@@ -35,6 +35,7 @@
   "scripts": {
     "test": "uvu tests"
   },
+  "packageManager": "pnpm@7.12.2",
   "peerDependencies": {
     "svelte": "^3.0.0"
   },

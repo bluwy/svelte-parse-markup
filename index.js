@@ -1,8 +1,8 @@
 import { parse as parseSvelte } from 'svelte/compiler'
 
 // https://github.com/sveltejs/svelte/blob/0b46c72cada210b3a6c72c30a51d35f5c4ccefb3/src/compiler/preprocess/index.ts#L146-L149
-const scriptRegex = /^<script(\s[^]*?)?(?:>([^]*?)<\/script>|\/>)/gim
-const styleRegex = /^<style(\s[^]*?)?(?:>([^]*?)<\/style>|\/>)/gim
+const scriptRegex = /<script(\s[^]*?)?(?:>([^]*?)<\/script>|\/>)/gim
+const styleRegex = /<style(\s[^]*?)?(?:>([^]*?)<\/style>|\/>)/gim
 const contextModuleRegex = /context\s*=\s*["']module["']/i
 
 /** @type {import('./index').parse} */

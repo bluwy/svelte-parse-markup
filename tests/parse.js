@@ -60,7 +60,15 @@ test('dont generate ast for missing style', async () => {
 })
 
 test('parse svelte code that needs preprocess', async () => {
-  const template = await read('Basic.svelte')
+  const template = await read('Preprocess.svelte')
+  const ast = parseTemplate(template)
+  assert.equal(ast.instance.content.body[0].type, 'Text')
+  assert.equal(ast.module.content.body[0].type, 'Text')
+  assert.equal(ast.css.children[0].type, 'Text')
+})
+
+test('parse svelte code that needs preprocess with space', async () => {
+  const template = await read('PreprocessWithSpace.svelte')
   const ast = parseTemplate(template)
   assert.equal(ast.instance.content.body[0].type, 'Text')
   assert.equal(ast.module.content.body[0].type, 'Text')

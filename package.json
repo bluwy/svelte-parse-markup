@@ -30,10 +30,14 @@
     "parse",
     "template"
   ],
+  "scripts": {
+    "test": "uvu tests"
+  },
   "peerDependencies": {
     "svelte": "^3.0.0"
   },
   "devDependencies": {
-    "svelte": "^3.50.1"
+    "svelte": "^3.50.1",
+    "uvu": "^0.5.6"
   }
 }

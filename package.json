@@ -1,0 +1,39 @@
+{
+  "name": "svelte-parse-template",
+  "description": "Parse Svelte template only",
+  "version": "0.1.0",
+  "license": "MIT",
+  "author": "Bjorn Lu",
+  "type": "module",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js"
+    }
+  },
+  "files": [
+    "index.js",
+    "index.d.ts"
+  ],
+  "funding": "https://bjornlu.com/sponsor",
+  "homepage": "https://github.com/bluwy/svelte-parse-template",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bluwy/svelte-parse-template.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bluwy/svelte-parse-template/issues"
+  },
+  "keywords": [
+    "svelte",
+    "parse",
+    "template"
+  ],
+  "peerDependencies": {
+    "svelte": "^3.0.0"
+  },
+  "devDependencies": {
+    "svelte": "^3.50.1"
+  }
+}

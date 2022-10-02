@@ -1,0 +1,14 @@
+lockfileVersion: 5.4
+
+specifiers:
+  svelte: ^3.50.1
+
+devDependencies:
+  svelte: 3.50.1
+
+packages:
+
+  /svelte/3.50.1:
+    resolution: {integrity: sha512-bS4odcsdj5D5jEg6riZuMg5NKelzPtmsCbD9RG+8umU03TeNkdWnP6pqbCm0s8UQNBkqk29w/Bdubn3C+HWSwA==}
+    engines: {node: '>= 8'}
+    dev: true

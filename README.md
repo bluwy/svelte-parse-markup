@@ -16,7 +16,7 @@ console.log(ast.instance.content.body)
 //     type: 'Text',
 //     start: <num>,
 //     end: <num>,
-//     raw: 'instance script content'
+//     raw: 'instance script content',
 //     content: 'instance script content'
 //   }
 // ]
@@ -28,7 +28,7 @@ console.log(ast.module.content.body)
 //     type: 'Text',
 //     start: <num>,
 //     end: <num>,
-//     raw: 'module script content'
+//     raw: 'module script content',
 //     content: 'module script content'
 //   }
 // ]
@@ -42,7 +42,7 @@ console.log(ast.css.children)
 //     type: 'Text',
 //     start: <num>,
 //     end: <num>,
-//     raw: 'css content'
+//     raw: 'css content',
 //     content: 'css content'
 //   }
 // ]
@@ -53,7 +53,7 @@ console.log(ast.css.children)
 ## Sponsors
 
 <p align="center">
-  <a href="https://bjornlu.com/sponsors.svg">
+  <a href="https://bjornlu.com/sponsor">
     <img src="https://bjornlu.com/sponsors.svg" alt="Sponsors" />
   </a>
 </p>

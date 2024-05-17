@@ -51,6 +51,48 @@ test('ast start and end is consistent', async () => {
   assert.equal(mine.css.content.end, them.css.content.end)
 })
 
+test('modern ast (svelte 5 onwards)', async () => {
+  const template = await read('Basic.svelte')
+  const mine = parseTemplate(template, { modern: true })
+  const them = parseSvelte(template, { modern: true })
+
+  assert.equal(mine.instance.content.start, them.instance.content.start)
+  assert.equal(mine.instance.content.end, them.instance.content.end)
+  assert.equal(
+    mine.instance.content.body[0].data,
+    template.slice(
+      mine.instance.content.body[0].start,
+      mine.instance.content.body[0].end
+    )
+  )
+
+  // module script
+  assert.equal(mine.module.content.start, them.module.content.start)
+  assert.equal(mine.module.content.end, them.module.content.end)
+  assert.equal(
+    mine.module.content.body[0].data,
+    template.slice(
+      mine.module.content.body[0].start,
+      mine.module.content.body[0].end
+    )
+  )
+
+  // fragment
+  assert.equal(mine.fragment.nodes[0].start, them.fragment.nodes[0].start)
+  assert.equal(mine.fragment.nodes[0].end, them.fragment.nodes[0].end)
+
+  // css
+  assert.equal(mine.css.start, them.css.start)
+  assert.equal(mine.css.end, them.css.end)
+  assert.equal(
+    mine.css.children[0].data,
+    template.slice(mine.css.children[0].start, mine.css.children[0].end)
+  )
+  assert.equal(mine.css.content.styles, them.css.content.styles)
+  assert.equal(mine.css.content.start, them.css.content.start)
+  assert.equal(mine.css.content.end, them.css.content.end)
+})
+
 test('dont generate ast for missing style', async () => {
   const template = await read('BasicPartial.svelte')
   const ast = parseTemplate(template)

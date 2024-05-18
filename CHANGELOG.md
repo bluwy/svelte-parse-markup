@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3 - 2024-05-17
+
+- Support Svelte 5
+
 ## 0.1.2 - 2023-06-23
 
 - Support Svelte 4

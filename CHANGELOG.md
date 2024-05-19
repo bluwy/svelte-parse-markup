@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.4 - 2024-05-19
+
+- Correctly forward type of `parse` function (with overloads) from `svelte/compiler`
+
 ## 0.1.3 - 2024-05-18
 
 - Support Svelte 5

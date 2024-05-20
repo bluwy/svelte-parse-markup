@@ -1,3 +1,4 @@
+// @ts-check
 import { parse as parseSvelte } from 'svelte/compiler'
 
 // https://github.com/sveltejs/svelte/blob/0b46c72cada210b3a6c72c30a51d35f5c4ccefb3/src/compiler/preprocess/index.ts#L146-L149
@@ -5,17 +6,21 @@ const scriptRegex = /<script(\s[^]*?)?(?:>([^]*?)<\/script>|\/>)/gim
 const styleRegex = /<style(\s[^]*?)?(?:>([^]*?)<\/style>|\/>)/gim
 const contextModuleRegex = /context\s*=\s*["']module["']/i
 
-/** @type {import('./index').parse} */
-export const parse = function(template, options) {
+// Use manual types here because TypeScript is unable to infer types for function overloads
+/**
+ * @param {string} template
+ * @param {any} options
+ */
+export function parse(template, options) {
   const originalTemplate = template
 
   // text nodes that will be injected into the ast. there maybe be multiple as the regex
   // may catch script tags in `svelte:head` for example. we will handle this below.
-  /** @type {import('svelte/types/compiler/interfaces').Text[]} */
+  /** @type {import('svelte/compiler').Text[]} */
   const instanceNodes = []
-  /** @type {import('svelte/types/compiler/interfaces').Text[]} */
+  /** @type {import('svelte/compiler').Text[]} */
   const moduleNodes = []
-  /** @type {import('svelte/types/compiler/interfaces').Text[]} */
+  /** @type {import('svelte/compiler').Text[]} */
   const cssNodes = []
 
   // extract instance and module script tags
@@ -25,7 +30,15 @@ export const parse = function(template, options) {
     const start = match.indexOf(content)
     const end = start + content.length
     // pre-construct text node
-    const node = { type: 'Text', start, end, raw: content, data: content }
+    /** @type {import('svelte/compiler').Text} */
+    const node = {
+      type: 'Text',
+      start,
+      end,
+      raw: content,
+      data: content,
+      parent: null
+    }
     if (isContextModule) {
       moduleNodes.push(node)
     } else {
@@ -41,7 +54,9 @@ export const parse = function(template, options) {
     const start = match.indexOf(content)
     const end = start + content.length
     // pre-construct text node
-    cssNodes.push({ type: 'Text', start, end, raw: content, data: content })
+    /** @type {import('svelte/compiler').Text} */
+    const node = { type: 'Text', start, end, raw: content, data: content, parent: null }
+    cssNodes.push(node)
     // empty content to avoid parsing errors
     return match.replace(content, content.replace(/./g, ' '))
   })
@@ -62,7 +77,7 @@ export const parse = function(template, options) {
         // will pass this condition
         originalTemplate.slice(node.start, node.end) === node.data
       ) {
-        // inject text node
+        // @ts-expect-error inject text node
         ast.instance.content.body = [node]
       }
     }
@@ -81,7 +96,7 @@ export const parse = function(template, options) {
         // will pass this condition
         originalTemplate.slice(node.start, node.end) === node.data
       ) {
-        // inject text node
+        // @ts-expect-error inject text node
         ast.module.content.body = [node]
       }
     }
@@ -100,7 +115,7 @@ export const parse = function(template, options) {
         // will pass this condition
         originalTemplate.slice(node.start, node.end) === node.data
       ) {
-        // inject text node
+        // @ts-expect-error inject text node
         ast.css.children = [node]
         // also inject the raw styles
         // NOTE: `ast.css.content` has start and end but it's guaranteed to be the same,

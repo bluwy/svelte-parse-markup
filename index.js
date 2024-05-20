@@ -6,7 +6,7 @@ const styleRegex = /<style(\s[^]*?)?(?:>([^]*?)<\/style>|\/>)/gim
 const contextModuleRegex = /context\s*=\s*["']module["']/i
 
 /** @type {import('./index').parse} */
-export function parse(template, options) {
+export const parse = function(template, options) {
   const originalTemplate = template
 
   // text nodes that will be injected into the ast. there maybe be multiple as the regex

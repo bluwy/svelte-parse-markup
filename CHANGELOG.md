@@ -1,8 +1,9 @@
 # Changelog
 
-## 0.1.4 - 2024-05-19
+## 0.1.4 - 2024-05-20
 
 - Correctly forward type of `parse` function (with overloads) from `svelte/compiler`
+- Add `parent: null` to generated `Text` node to satisfy Svelte 5 types
 
 ## 0.1.3 - 2024-05-18
 

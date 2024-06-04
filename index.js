@@ -1,9 +1,11 @@
 // @ts-check
 import { parse as parseSvelte } from 'svelte/compiler'
 
-// https://github.com/sveltejs/svelte/blob/0b46c72cada210b3a6c72c30a51d35f5c4ccefb3/src/compiler/preprocess/index.ts#L146-L149
-const scriptRegex = /<script(\s[^]*?)?(?:>([^]*?)<\/script>|\/>)/gim
-const styleRegex = /<style(\s[^]*?)?(?:>([^]*?)<\/style>|\/>)/gim
+// https://github.com/sveltejs/svelte/blob/3acee5d2469a86f8b9ba9ae660ef2fb8c4899c80/packages/svelte/src/compiler/preprocess/index.js#L250-L254
+const scriptRegex =
+  /<script((?:\s+[^=>'"/]+=(?:"[^"]*"|'[^']*'|[^>\s]+)|\s+[^=>'"/]+)*\s*)(?:\/>|>([\S\s]*?)<\/script>)/g
+const styleRegex =
+  /<style((?:\s+[^=>'"/]+=(?:"[^"]*"|'[^']*'|[^>\s]+)|\s+[^=>'"/]+)*\s*)(?:\/>|>([\S\s]*?)<\/style>)/g
 const contextModuleRegex = /context\s*=\s*["']module["']/i
 
 // Use manual types here because TypeScript is unable to infer types for function overloads
@@ -25,6 +27,8 @@ export function parse(template, options) {
 
   // extract instance and module script tags
   template = template.replace(scriptRegex, (match, attrs, content) => {
+    if (!content) return match
+
     const isContextModule = contextModuleRegex.test(attrs)
     // NOTE: the start and end here are relative to the match, we will fix this later
     const start = match.indexOf(content)
@@ -50,12 +54,21 @@ export function parse(template, options) {
 
   // extract css style tags
   template = template.replace(styleRegex, (match, attrs, content) => {
+    if (!content) return match
+
     // NOTE: the start and end here are relative to the match, we will fix this later
     const start = match.indexOf(content)
     const end = start + content.length
     // pre-construct text node
     /** @type {import('svelte/compiler').Text} */
-    const node = { type: 'Text', start, end, raw: content, data: content, parent: null }
+    const node = {
+      type: 'Text',
+      start,
+      end,
+      raw: content,
+      data: content,
+      parent: null
+    }
     cssNodes.push(node)
     // empty content to avoid parsing errors
     return match.replace(content, content.replace(/./g, ' '))

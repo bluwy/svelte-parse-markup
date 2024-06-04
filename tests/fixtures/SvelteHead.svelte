@@ -1,6 +1,8 @@
 <svelte:head>
   <script>trick()</script>
   <style>trick {}</style>
+  <script />
+  <style />
 </svelte:head>
 
 <script context="module">

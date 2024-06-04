@@ -2,7 +2,7 @@ import fs from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
-import { parse as parseTemplate } from '../index.js'
+import { parse as parseTemplate } from 'svelte-parse-markup'
 import { parse as parseSvelte } from 'svelte/compiler'
 
 /** @type {(p: string) => Promise<string>} */

@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Handle right-arrow symbol in `generic` attribute value
+- Handle self-closing script and style tags
+
 ## 0.1.4 - 2024-05-20
 
 - Correctly forward type of `parse` function (with overloads) from `svelte/compiler`

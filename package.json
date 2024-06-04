@@ -1,7 +1,7 @@
 {
   "name": "svelte-parse-markup",
   "description": "Parse Svelte markup without parsing the script or style tags",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "license": "MIT",
   "author": "Bjorn Lu",
   "type": "module",

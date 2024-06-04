@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.5 - 2024-06-04
 
 - Handle right-arrow symbol in `generic` attribute value
 - Handle self-closing script and style tags

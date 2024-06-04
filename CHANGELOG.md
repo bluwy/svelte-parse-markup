@@ -4,6 +4,7 @@
 
 - Handle right-arrow symbol in `generic` attribute value
 - Handle self-closing script and style tags
+- Allow importing ESM from `require()`
 
 ## 0.1.4 - 2024-05-20
 

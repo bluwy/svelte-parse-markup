@@ -11,6 +11,9 @@ importers:
       svelte:
         specifier: ^5.0.0-next.149
         version: 5.0.0-next.149
+      tinybench:
+        specifier: ^2.8.0
+        version: 2.8.0
       uvu:
         specifier: ^0.5.6
         version: 0.5.6
@@ -96,6 +99,9 @@ packages:
   svelte@5.0.0-next.149:
     resolution: {integrity: sha512-n7CPR/7XrU7D8Wlo8kVhhEvE+aytNbBHSBfjdFm0xSDFlb5TuSNbQbKDifDGVOAFXGtVhNzl755vLLfUyBlkiA==}
     engines: {node: '>=18'}
+
+  tinybench@2.8.0:
+    resolution: {integrity: sha512-1/eK7zUnIklz4JUUlL+658n58XO2hHLQfSk1Zf2LKieUjxidN16eKFEoDEfjHc3ohofSSqK3X5yO6VGb6iW8Lw==}
 
   uvu@0.5.6:
     resolution: {integrity: sha512-+g8ENReyr8YsOc6fv/NVJs2vFdHBnBNdfE49rshrTzDWOlUx4Gq7KOS2GD8eqhy2j+Ejq29+SbKH8yjkAqXqoA==}
@@ -189,6 +195,8 @@ snapshots:
       locate-character: 3.0.0
       magic-string: 0.30.10
       zimmerframe: 1.1.2
+
+  tinybench@2.8.0: {}
 
   uvu@0.5.6:
     dependencies:

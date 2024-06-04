@@ -1,11 +1,6 @@
 // @ts-check
 import { parse as parseSvelte } from 'svelte/compiler'
 
-// https://github.com/sveltejs/svelte/blob/3acee5d2469a86f8b9ba9ae660ef2fb8c4899c80/packages/svelte/src/compiler/preprocess/index.js#L250-L254
-const scriptRegex =
-  /<script((?:\s+[^=>'"/]+=(?:"[^"]*"|'[^']*'|[^>\s]+)|\s+[^=>'"/]+)*\s*)(?:\/>|>([\S\s]*?)<\/script>)/g
-const styleRegex =
-  /<style((?:\s+[^=>'"/]+=(?:"[^"]*"|'[^']*'|[^>\s]+)|\s+[^=>'"/]+)*\s*)(?:\/>|>([\S\s]*?)<\/style>)/g
 const contextModuleRegex = /context\s*=\s*["']module["']/i
 
 // Use manual types here because TypeScript is unable to infer types for function overloads
@@ -26,19 +21,21 @@ export function parse(template, options) {
   const cssNodes = []
 
   // extract instance and module script tags
-  template = template.replace(scriptRegex, (match, attrs, content) => {
-    if (!content) return match
+  const scripts = extractScripts(template)
+  for (const s of scripts) {
+    // ignore self-closing script tags as they parse fine
+    if (s.contentStart == null || s.contentEnd == null) continue
 
-    const isContextModule = contextModuleRegex.test(attrs)
-    // NOTE: the start and end here are relative to the match, we will fix this later
-    const start = match.indexOf(content)
-    const end = start + content.length
+    const isContextModule = contextModuleRegex.test(
+      template.slice(s.tagStart, s.contentStart)
+    )
+    const content = template.slice(s.contentStart, s.contentEnd)
     // pre-construct text node
     /** @type {import('svelte/compiler').Text} */
     const node = {
       type: 'Text',
-      start,
-      end,
+      start: s.contentStart,
+      end: s.contentEnd,
       raw: content,
       data: content,
       parent: null
@@ -49,30 +46,30 @@ export function parse(template, options) {
       instanceNodes.push(node)
     }
     // empty content to avoid parsing errors
-    return match.replace(content, content.replace(/./g, ' '))
-  })
+    template = template.replace(content, ' '.repeat(content.length))
+  }
 
   // extract css style tags
-  template = template.replace(styleRegex, (match, attrs, content) => {
-    if (!content) return match
+  const styles = extractStyles(template)
+  for (const s of styles) {
+    // ignore self-closing style tags as they parse fine
+    if (s.contentStart == null || s.contentEnd == null) continue
 
-    // NOTE: the start and end here are relative to the match, we will fix this later
-    const start = match.indexOf(content)
-    const end = start + content.length
+    const content = template.slice(s.contentStart, s.contentEnd)
     // pre-construct text node
     /** @type {import('svelte/compiler').Text} */
     const node = {
       type: 'Text',
-      start,
-      end,
+      start: s.contentStart,
+      end: s.contentEnd,
       raw: content,
       data: content,
       parent: null
     }
     cssNodes.push(node)
     // empty content to avoid parsing errors
-    return match.replace(content, content.replace(/./g, ' '))
-  })
+    template = template.replace(content, ' '.repeat(content.length))
+  }
 
   // do the actual parsing
   const ast = parseSvelte(template, options)
@@ -80,9 +77,6 @@ export function parse(template, options) {
   // inject instance script text node
   if (ast.instance && instanceNodes.length) {
     for (const node of instanceNodes) {
-      // fix relative num to absolute num
-      node.start += ast.instance.start
-      node.end += ast.instance.start
       if (
         // fast path
         instanceNodes.length === 1 ||
@@ -99,9 +93,6 @@ export function parse(template, options) {
   // inject module script text node
   if (ast.module && moduleNodes.length) {
     for (const node of moduleNodes) {
-      // fix relative num to absolute num
-      node.start += ast.module.start
-      node.end += ast.module.start
       if (
         // fast path
         moduleNodes.length === 1 ||
@@ -118,9 +109,6 @@ export function parse(template, options) {
   // inject css text node
   if (ast.css && cssNodes.length) {
     for (const node of cssNodes) {
-      // fix relative num to absolute num
-      node.start += ast.css.start
-      node.end += ast.css.start
       if (
         // fast path
         cssNodes.length === 1 ||
@@ -139,4 +127,100 @@ export function parse(template, options) {
   }
 
   return ast
+}
+
+/** @type {import('./index.d.ts').extractScripts} */
+export function extractScripts(template) {
+  /** @type {import('./index.d.ts').ExtractPosition[]} */
+  const extracted = []
+
+  let i = 0
+  do {
+    const tagStart = template.indexOf('<script', i)
+    if (tagStart === -1) break
+
+    const contentStart = lexUntilClosingTag(template, tagStart + 7)
+    if (contentStart === -1) break
+
+    // self-closing script tag
+    if (template[contentStart - 2] === '/') {
+      extracted.push({ tagStart, tagEnd: contentStart })
+      i = contentStart
+      continue
+    }
+
+    const contentEnd = template.indexOf('</script>', contentStart)
+    if (contentEnd === -1) break
+
+    const tagEnd = contentEnd + 9
+
+    extracted.push({ tagStart, tagEnd, contentStart, contentEnd })
+    i = tagEnd
+  } while (i < template.length)
+
+  return extracted
+}
+
+/** @type {import('./index.d.ts').extractStyles} */
+export function extractStyles(template) {
+  /** @type {import('./index.d.ts').ExtractPosition[]} */
+  const extracted = []
+
+  let i = 0
+  do {
+    const tagStart = template.indexOf('<style', i)
+    if (tagStart === -1) break
+
+    const contentStart = lexUntilClosingTag(template, tagStart + 6)
+    if (contentStart === -1) break
+
+    // self-closing script tag
+    if (template[contentStart - 2] === '/') {
+      extracted.push({ tagStart, tagEnd: contentStart })
+      i = contentStart
+      continue
+    }
+
+    const contentEnd = template.indexOf('</style>', contentStart)
+    if (contentEnd === -1) break
+
+    const tagEnd = contentEnd + 8
+
+    extracted.push({ tagStart, tagEnd, contentStart, contentEnd })
+    i = tagEnd
+  } while (i < template.length)
+
+  return extracted
+}
+
+/**
+ * Try to lex from index until we find a `>` or `/>`.
+ * The number will be the index after `>` or `/>`.
+ * If no closing tag is found, return -1.
+ * @param {string} template
+ * @param {number} startIndex
+ */
+function lexUntilClosingTag(template, startIndex) {
+  let i = startIndex
+  /** @type {'"' | "'" | false}  */
+  let withinQuotes = false
+  let c
+  while ((c = template[i++])) {
+    if (c === '"' || c === "'") {
+      if (withinQuotes) {
+        if (c === withinQuotes) {
+          withinQuotes = false
+        }
+      } else {
+        withinQuotes = c
+      }
+    } else if (withinQuotes) {
+      continue
+    } else if (c === '>') {
+      return i
+    } else if (c === '/' && template[i] === '>') {
+      return i + 1
+    }
+  }
+  return -1
 }

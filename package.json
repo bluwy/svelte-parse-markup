@@ -33,7 +33,8 @@
     "style"
   ],
   "scripts": {
-    "test": "uvu tests"
+    "test": "uvu tests",
+    "bench": "node benchmarks/extract.js"
   },
   "packageManager": "pnpm@9.1.1",
   "peerDependencies": {
@@ -41,6 +42,7 @@
   },
   "devDependencies": {
     "svelte": "^5.0.0-next.149",
+    "tinybench": "^2.8.0",
     "uvu": "^0.5.6"
   }
 }
